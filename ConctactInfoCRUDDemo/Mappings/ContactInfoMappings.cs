@@ -17,7 +17,9 @@ namespace ConctactInfoCRUDDemo.Mappings
             CreateMap<PatientDetailsModel, ContactInfo.DBEntities.Entities.PatientDetail>().ReverseMap();
             CreateMap<ContactInfo.DBEntities.Entities.PatientDetail, PatientDetailsModel>();
             CreateMap<PrescriptionModel, ContactInfo.DBEntities.Entities.Prescription>().ReverseMap();
-     
+            CreateMap<CoordinatingPersonModel, ContactInfo.DBEntities.Entities.CoordinatingPerson>().ReverseMap();
+            CreateMap<PatientPoliceCommunicationModel, ContactInfo.DBEntities.Entities.PatientPoliceCommunication>().ReverseMap();
+
 
         }
     }

@@ -34,5 +34,13 @@ namespace ContactInfo.BL
         {
             return _patientRepository.UpdateMedicineStatus(lstPresription);
         }
+        public int AddCoordinatingPerson(CoordinatingPerson coordinatingPerson)
+        {
+            return _patientRepository.AddCoordinatingPerson(coordinatingPerson);
+        }
+        public PatientPoliceCommunication AddPatientPoliceCommunicationDetails(PatientPoliceCommunication patientPoliceCommunication)
+        {
+            return _patientRepository.AddPatientPoliceCommunicationDetails(patientPoliceCommunication);
+        }
     }
 }

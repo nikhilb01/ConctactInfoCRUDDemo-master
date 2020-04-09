@@ -40,6 +40,9 @@ namespace ConctactInfoCRUDDemo.Models
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<int> ConsultDoctor { get; set; }
+        public string Category { get; set; }
+        public Nullable<bool> IsPoliceVerificationRequired { get; set; }
+        public CoordinatingPersonModel CoordinatingPerson { get; set; }
         public virtual ICollection<PrescriptionModel> Prescriptions { get; set; }
     }
 

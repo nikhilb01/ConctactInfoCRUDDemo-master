@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="MedicalStoreDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CoordinatingPerson">
+          <Key>
+            <PropertyRef Name="CoordinatingPersonId" />
+          </Key>
+          <Property Name="CoordinatingPersonId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Address" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="PatientDetails">
           <Key>
             <PropertyRef Name="PatientId" />
@@ -23,6 +32,18 @@
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="ModifiedOn" Type="datetime" />
           <Property Name="ConsultDoctor" Type="int" />
+          <Property Name="Category" Type="nvarchar" MaxLength="20" />
+          <Property Name="IsPoliceVerificationRequired" Type="bit" />
+          <Property Name="CoordinatingPersonId" Type="int" />
+        </EntityType>
+        <EntityType Name="PatientPoliceCommunication">
+          <Key>
+            <PropertyRef Name="PatientPoliceCommunicationId" />
+          </Key>
+          <Property Name="PatientPoliceCommunicationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PatientId" Type="int" Nullable="false" />
+          <Property Name="PoliceRemark" Type="nvarchar(max)" />
+          <Property Name="Status" Type="bit" />
         </EntityType>
         <EntityType Name="Prescription">
           <Key>
@@ -65,6 +86,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PatientPoliceCommunication_PatientDetails">
+          <End Role="PatientDetails" Type="Self.PatientDetails" Multiplicity="1" />
+          <End Role="PatientPoliceCommunication" Type="Self.PatientPoliceCommunication" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PatientDetails">
+              <PropertyRef Name="PatientId" />
+            </Principal>
+            <Dependent Role="PatientPoliceCommunication">
+              <PropertyRef Name="PatientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Prescription_PatientDetails">
           <End Role="PatientDetails" Type="Self.PatientDetails" Multiplicity="1" />
           <End Role="Prescription" Type="Self.Prescription" Multiplicity="*" />
@@ -78,12 +111,18 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MedicalStoreDBModelStoreContainer">
+          <EntitySet Name="CoordinatingPerson" EntityType="Self.CoordinatingPerson" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PatientDetails" EntityType="Self.PatientDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PatientPoliceCommunication" EntityType="Self.PatientPoliceCommunication" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Prescription" EntityType="Self.Prescription" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserDetails" EntityType="Self.UserDetails" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_PatientDetails_PatientDetails" Association="Self.FK_PatientDetails_PatientDetails">
             <End Role="PatientDetails" EntitySet="PatientDetails" />
             <End Role="PatientDetails1" EntitySet="PatientDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PatientPoliceCommunication_PatientDetails" Association="Self.FK_PatientPoliceCommunication_PatientDetails">
+            <End Role="PatientDetails" EntitySet="PatientDetails" />
+            <End Role="PatientPoliceCommunication" EntitySet="PatientPoliceCommunication" />
           </AssociationSet>
           <AssociationSet Name="FK_Prescription_PatientDetails" Association="Self.FK_Prescription_PatientDetails">
             <End Role="PatientDetails" EntitySet="PatientDetails" />
@@ -115,6 +154,10 @@
           <NavigationProperty Name="PatientDetail1" Relationship="Self.FK_PatientDetails_PatientDetails" FromRole="PatientDetails1" ToRole="PatientDetails" />
           <NavigationProperty Name="Prescriptions" Relationship="MedicalStoreDBModel.FK_Prescription_PatientDetails" FromRole="PatientDetail" ToRole="Prescription" />
           <Property Name="ConsultDoctor" Type="Int32" />
+          <Property Name="Category" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IsPoliceVerificationRequired" Type="Boolean" />
+          <Property Name="CoordinatingPersonId" Type="Int32" />
+          <NavigationProperty Name="PatientPoliceCommunications" Relationship="MedicalStoreDBModel.FK_PatientPoliceCommunication_PatientDetails" FromRole="PatientDetail" ToRole="PatientPoliceCommunication" />
         </EntityType>
         <EntityType Name="UserDetail">
           <Key>
@@ -152,6 +195,12 @@
             <End Role="PatientDetail" EntitySet="PatientDetails" />
             <End Role="Prescription" EntitySet="Prescriptions" />
           </AssociationSet>
+          <EntitySet Name="CoordinatingPersons" EntityType="MedicalStoreDBModel.CoordinatingPerson" />
+          <EntitySet Name="PatientPoliceCommunications" EntityType="MedicalStoreDBModel.PatientPoliceCommunication" />
+          <AssociationSet Name="FK_PatientPoliceCommunication_PatientDetails" Association="MedicalStoreDBModel.FK_PatientPoliceCommunication_PatientDetails">
+            <End Role="PatientDetail" EntitySet="PatientDetails" />
+            <End Role="PatientPoliceCommunication" EntitySet="PatientPoliceCommunications" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Prescription">
           <Key>
@@ -183,6 +232,37 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="CoordinatingPerson">
+          <Key>
+            <PropertyRef Name="CoordinatingPersonId" />
+          </Key>
+          <Property Name="CoordinatingPersonId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="PatientPoliceCommunication">
+          <Key>
+            <PropertyRef Name="PatientPoliceCommunicationId" />
+          </Key>
+          <Property Name="PatientPoliceCommunicationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PatientId" Type="Int32" Nullable="false" />
+          <Property Name="PoliceRemark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" />
+          <NavigationProperty Name="PatientDetail" Relationship="MedicalStoreDBModel.FK_PatientPoliceCommunication_PatientDetails" FromRole="PatientPoliceCommunication" ToRole="PatientDetail" />
+        </EntityType>
+        <Association Name="FK_PatientPoliceCommunication_PatientDetails">
+          <End Type="MedicalStoreDBModel.PatientDetail" Role="PatientDetail" Multiplicity="1" />
+          <End Type="MedicalStoreDBModel.PatientPoliceCommunication" Role="PatientPoliceCommunication" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PatientDetail">
+              <PropertyRef Name="PatientId" />
+            </Principal>
+            <Dependent Role="PatientPoliceCommunication">
+              <PropertyRef Name="PatientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -192,6 +272,9 @@
           <EntitySetMapping Name="PatientDetails">
             <EntityTypeMapping TypeName="MedicalStoreDBModel.PatientDetail">
               <MappingFragment StoreEntitySet="PatientDetails">
+                <ScalarProperty Name="CoordinatingPersonId" ColumnName="CoordinatingPersonId" />
+                <ScalarProperty Name="IsPoliceVerificationRequired" ColumnName="IsPoliceVerificationRequired" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
                 <ScalarProperty Name="ConsultDoctor" ColumnName="ConsultDoctor" />
                 <ScalarProperty Name="PatientId" ColumnName="PatientId" />
                 <ScalarProperty Name="PatientName" ColumnName="PatientName" />
@@ -237,6 +320,26 @@
                 <ScalarProperty Name="PatientId" ColumnName="PatientId" />
                 <ScalarProperty Name="MedicineName" ColumnName="MedicineName" />
                 <ScalarProperty Name="PrescriptionId" ColumnName="PrescriptionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CoordinatingPersons">
+            <EntityTypeMapping TypeName="MedicalStoreDBModel.CoordinatingPerson">
+              <MappingFragment StoreEntitySet="CoordinatingPerson">
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CoordinatingPersonId" ColumnName="CoordinatingPersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PatientPoliceCommunications">
+            <EntityTypeMapping TypeName="MedicalStoreDBModel.PatientPoliceCommunication">
+              <MappingFragment StoreEntitySet="PatientPoliceCommunication">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PoliceRemark" ColumnName="PoliceRemark" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="PatientPoliceCommunicationId" ColumnName="PatientPoliceCommunicationId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

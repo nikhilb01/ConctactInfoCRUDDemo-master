@@ -28,5 +28,7 @@ namespace ContactInfo.DBEntities.Entities
         public virtual DbSet<PatientDetail> PatientDetails { get; set; }
         public virtual DbSet<UserDetail> UserDetails { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
+        public virtual DbSet<CoordinatingPerson> CoordinatingPersons { get; set; }
+        public virtual DbSet<PatientPoliceCommunication> PatientPoliceCommunications { get; set; }
     }
 }

@@ -114,10 +114,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Mappings\ContactInfoMappings.cs" />
     <Compile Include="Models\ContactInfoViewModel.cs" />
+    <Compile Include="Models\CoordinatingPersonModel.cs" />
+    <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\PatientDetailsModel.cs" />
+    <Compile Include="Models\PatientPoliceCommunicationModel.cs" />
     <Compile Include="Models\PatientResponse.cs" />
     <Compile Include="Models\UserDetailsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

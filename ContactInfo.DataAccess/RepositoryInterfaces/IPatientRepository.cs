@@ -14,5 +14,7 @@ namespace ContactInfo.DataAccess.RepositoryInterfaces
         List<PatientDetail> GetAllPatientDetails();
         List<PrescriptionDetails> GetMedicineDetails(bool isDelivered);
         List<Prescription> UpdateMedicineStatus(List<Prescription> lstPresription);
+        int AddCoordinatingPerson(CoordinatingPerson coordinatingPerson);
+        PatientPoliceCommunication AddPatientPoliceCommunicationDetails(PatientPoliceCommunication patientPoliceCommunication);
     }
 }

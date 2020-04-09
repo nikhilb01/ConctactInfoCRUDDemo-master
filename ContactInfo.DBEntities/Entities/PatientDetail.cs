@@ -18,6 +18,7 @@ namespace ContactInfo.DBEntities.Entities
         public PatientDetail()
         {
             this.Prescriptions = new HashSet<Prescription>();
+            this.PatientPoliceCommunications = new HashSet<PatientPoliceCommunication>();
         }
     
         public int PatientId { get; set; }
@@ -34,10 +35,15 @@ namespace ContactInfo.DBEntities.Entities
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<int> ConsultDoctor { get; set; }
+        public string Category { get; set; }
+        public Nullable<bool> IsPoliceVerificationRequired { get; set; }
+        public Nullable<int> CoordinatingPersonId { get; set; }
     
         public virtual PatientDetail PatientDetails1 { get; set; }
         public virtual PatientDetail PatientDetail1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Prescription> Prescriptions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PatientPoliceCommunication> PatientPoliceCommunications { get; set; }
     }
 }

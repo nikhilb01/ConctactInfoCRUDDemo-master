@@ -10,6 +10,9 @@
         <AssociationConnector Association="MedicalStoreDBModel.FK_PatientDetails_PatientDetails" ManuallyRouted="false" />
         <EntityTypeShape EntityType="MedicalStoreDBModel.Prescription" Width="1.5" PointX="3" PointY="1.75" />
         <AssociationConnector Association="MedicalStoreDBModel.FK_Prescription_PatientDetails" />
+        <EntityTypeShape EntityType="MedicalStoreDBModel.CoordinatingPerson" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="MedicalStoreDBModel.PatientPoliceCommunication" Width="1.5" PointX="3" PointY="6.5" />
+        <AssociationConnector Association="MedicalStoreDBModel.FK_PatientPoliceCommunication_PatientDetails" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

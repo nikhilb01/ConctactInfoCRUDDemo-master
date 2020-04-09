@@ -52,6 +52,9 @@
     <Compile Include="Class1.cs" />
     <Compile Include="CustomEntities\PatientDetailModel.cs" />
     <Compile Include="CustomEntities\PrescriptionDetails.cs" />
+    <Compile Include="Entities\CoordinatingPerson.cs">
+      <DependentUpon>MedicalStoreModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\MedicalStoreModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -68,6 +71,9 @@
       <DependentUpon>MedicalStoreModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Entities\PatientDetail.cs">
+      <DependentUpon>MedicalStoreModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\PatientPoliceCommunication.cs">
       <DependentUpon>MedicalStoreModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\Prescription.cs">

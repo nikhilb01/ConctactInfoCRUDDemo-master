@@ -27,7 +27,10 @@ namespace ContactInfo.DataAccess.Repositories
                     IsActive = true,
                     CreatedOn = patientDetail.CreatedOn,
                     CreatedBy = patientDetail.CreatedBy,
-                    ConsultDoctor = patientDetail.ConsultDoctor
+                    ConsultDoctor = patientDetail.ConsultDoctor,
+                    Category = patientDetail.Category,
+                    IsPoliceVerificationRequired = patientDetail.IsPoliceVerificationRequired,
+                    CoordinatingPersonId = patientDetail.CoordinatingPersonId
                 };
                 ctx.PatientDetails.Add(patient);
                 ctx.SaveChanges();
@@ -40,6 +43,11 @@ namespace ContactInfo.DataAccess.Repositories
 
                 }
                 ctx.SaveChanges();
+
+                //ctx.CoordinatingPersons.Add(new CoordinatingPerson
+                //{
+                //    Name = patientDetail.co
+                //})
 
                 patientDetail.PatientId = patient.PatientId;
 
@@ -86,13 +94,35 @@ namespace ContactInfo.DataAccess.Repositories
                 foreach (var prescription in lstPresription)
                 {
                     var prescriptionDetails = ctx.Prescriptions.Where(pre => pre.PrescriptionId == prescription.PrescriptionId).SingleOrDefault();
-                    if(prescriptionDetails !=null)
+                    if (prescriptionDetails != null)
                         prescriptionDetails.IsDelivered = true;
                     ctx.SaveChanges();
 
                 }
                 lstPresription.ForEach(pre => pre.IsDelivered = true);
                 return lstPresription;
+            }
+        }
+
+        public int AddCoordinatingPerson(CoordinatingPerson coordinatingPerson)
+        {
+            using (var ctx = new MedicalStoreDBEntities())
+            {
+                ctx.CoordinatingPersons.Add(coordinatingPerson);
+                ctx.SaveChanges();
+
+                return coordinatingPerson.CoordinatingPersonId;
+            }
+        }
+
+        public PatientPoliceCommunication AddPatientPoliceCommunicationDetails(PatientPoliceCommunication patientPoliceCommunication)
+        {
+            using (var ctx = new MedicalStoreDBEntities())
+            {
+                ctx.PatientPoliceCommunications.Add(patientPoliceCommunication);
+                ctx.SaveChanges();
+
+                return patientPoliceCommunication;
             }
         }
     }

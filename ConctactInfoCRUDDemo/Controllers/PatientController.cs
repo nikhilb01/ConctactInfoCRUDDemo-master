@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ConctactInfoCRUDDemo.Helpers;
 using ConctactInfoCRUDDemo.Models;
 using ContactInfo.BL.BusinessInterfaces;
 using System;
@@ -17,6 +18,7 @@ namespace ConctactInfoCRUDDemo.Controllers
         public PatientController(IPatientBL patientBL)
         {
             _patientBL = patientBL;
+            EmailHelper.Init(EmailHelper.EMAIL_SENDER, EmailHelper.EMAIL_CREDENTIALS, EmailHelper.SMTP_CLIENT);
         }
 
         [HttpPost]
@@ -40,17 +42,39 @@ namespace ConctactInfoCRUDDemo.Controllers
                     return patientResponse;
                 }
 
+                int coordinatingPersonId = 0;
+
+                if (patientDetailsModel.CoordinatingPerson != null)
+                {
+                    var coordinatingPerson = Mapper.Map<CoordinatingPersonModel, ContactInfo.DBEntities.Entities.CoordinatingPerson>(patientDetailsModel.CoordinatingPerson);
+
+                    coordinatingPersonId = _patientBL.AddCoordinatingPerson(coordinatingPerson);
+                    patientDetailsModel.CoordinatingPerson.CoordinatingPersonId = coordinatingPersonId;
+                }
                 var patientDetails = Mapper.Map<PatientDetailsModel, ContactInfo.DBEntities.Entities.PatientDetail>(patientDetailsModel);
+
+                if(coordinatingPersonId > 0)
+                    patientDetails.CoordinatingPersonId = coordinatingPersonId;
 
                 var patientModel = Mapper.Map<ContactInfo.DBEntities.Entities.PatientDetail, PatientDetailsModel > (_patientBL.AddPatient(patientDetails));
 
+                patientModel.CoordinatingPerson = patientDetailsModel.CoordinatingPerson;
 
                 if (patientModel.PatientId> 0)
                 {
                     patientResponse.Status = Convert.ToInt32(HttpStatusCode.OK);
                     patientResponse.Message = "Patient added successfully";
                     patientResponse.Data = patientModel;
+
+                    EmailModel emailModel = new EmailModel();
+                    emailModel.Recipient = "";
+                    emailModel.Subject = patientModel.Category + " Case Verification";
+                    emailModel.Message = "test";
                      
+                    if( patientModel.IsPoliceVerificationRequired== true)
+                    {
+                        bool isMailSent = EmailHelper.SendEMail(emailModel);
+                    }
                 }
                 else
                 {
@@ -196,6 +220,50 @@ namespace ConctactInfoCRUDDemo.Controllers
             {
                 patientResponse.Status = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 patientResponse.Message = "Issue in updating medicine status";
+
+                return patientResponse;
+            }
+        }
+        
+        [HttpPost]
+        public PatientResponse AddPatientPoliceCommunicationDetails([FromBody] PatientPoliceCommunicationModel patientPoliceCommunicationModel)
+        {
+            PatientResponse patientResponse = new PatientResponse();
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    patientResponse.Status = Convert.ToInt32(HttpStatusCode.BadRequest);
+                    patientResponse.Message = "Invalid data";
+                    return patientResponse;
+                }
+
+                var patientPoliceCommunicationDetails = Mapper.Map<PatientPoliceCommunicationModel, ContactInfo.DBEntities.Entities.PatientPoliceCommunication>(patientPoliceCommunicationModel);
+
+                //var data = _patientBL.AddPatientPoliceCommunicationDetails(patientPoliceCommunicationDetails);
+
+                var data = Mapper.Map<ContactInfo.DBEntities.Entities.PatientPoliceCommunication, PatientPoliceCommunicationModel>(_patientBL.AddPatientPoliceCommunicationDetails(patientPoliceCommunicationDetails));
+
+                if (data.PatientPoliceCommunicationId > 0)
+                {
+                    patientResponse.Status = Convert.ToInt32(HttpStatusCode.OK);
+                    patientResponse.Message = "Patient Police Communication added successfully";
+                    patientResponse.Data = data;
+
+                }
+                else
+                {
+                    patientResponse.Status = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                    patientResponse.Message = "Error while adding";
+                }
+
+                return patientResponse;
+            }
+            catch (Exception ex)
+            {
+                patientResponse.Status = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                patientResponse.Message = "Error while adding";
 
                 return patientResponse;
             }
