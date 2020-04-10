@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ConctactInfoCRUDDemo.Filter;
 using ConctactInfoCRUDDemo.Helpers;
 using ConctactInfoCRUDDemo.Models;
 using ContactInfo.BL.BusinessInterfaces;
@@ -22,6 +23,7 @@ namespace ConctactInfoCRUDDemo.Controllers
         }
 
         [HttpPost]
+        [JWTAuthenticationFilter]
         public PatientResponse AddPatient([FromBody]PatientDetailsModel patientDetailsModel)
         {
             PatientResponse patientResponse = new PatientResponse();

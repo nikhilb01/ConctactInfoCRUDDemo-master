@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ConctactInfoCRUDDemo.Filter;
 using ConctactInfoCRUDDemo.Models;
 using ContactInfo.BL.BusinessInterfaces;
 using System;
@@ -88,44 +89,35 @@ namespace ConctactInfoCRUDDemo.Controllers
             return _accountBL.GetAllUserDetails().Any(u => u.UserName.ToLower() == userName.ToLower());
         }
 
-        public LoginResponse SignIn([FromBody] UserDetailsModel userDetailsModel)
+        [AllowAnonymous]
+        public HttpResponseMessage SignIn([FromBody] UserDetailsModel userDetailsModel)
         {
             try
             {
-                LoginResponse loginResponse = new LoginResponse();
 
                 if (string.IsNullOrEmpty(userDetailsModel.UserName) || string.IsNullOrEmpty(userDetailsModel.Password))
                 {
-                    loginResponse.Status = Convert.ToInt32(HttpStatusCode.BadRequest);
-                    loginResponse.Message = "Username or Password can not be empty";
-                    return loginResponse;
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Username or Password can not be empty", Configuration.Formatters.JsonFormatter);
                 }
 
                 var userDetails = Mapper.Map<UserDetailsModel, ContactInfo.DBEntities.Entities.UserDetail>(userDetailsModel);
 
                 bool status = _accountBL.SignIn(userDetails);
-
-                if(status)
+                if (!status)
                 {
-                    loginResponse.Status = Convert.ToInt32(HttpStatusCode.OK);
-                    loginResponse.Message = "User logged in successfully";
-                    return loginResponse;
+                    
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid User", Configuration.Formatters.JsonFormatter);
                 }
                 else
                 {
-                    loginResponse.Status = Convert.ToInt32(HttpStatusCode.BadRequest);
-                    loginResponse.Message = "Invalid username or password";
-                    return loginResponse;
+                    string token = JwtManager.GenerateToken(userDetails.UserName);
+                    return Request.CreateResponse(HttpStatusCode.OK, token, Configuration.Formatters.JsonFormatter);
                 }
 
             }
             catch (Exception ex)
             {
-                LoginResponse loginResponse = new LoginResponse();
-                loginResponse.Status = Convert.ToInt32(HttpStatusCode.InternalServerError);
-                loginResponse.Message = "Error while fetching data";
-
-                return loginResponse;
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Internal Server Error", Configuration.Formatters.JsonFormatter);
             }
         }
     }
